@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="ug" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#667eea">
+<title>ئادەمنىڭ ئېغىرلىقىنى ھېسابلىغۇچ</title>
+<style>
+/* ==================== ئاساسىي ==================== */
+* { margin: 0; padding: 0; box-sizing: border-box; font-family: Tahoma, 'Segoe UI', Arial, sans-serif; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --primary: #667eea;
+  --primary-2: #764ba2;
+  --card: #ffffff;
+  --bg: #eef1f7;
+  --text: #1e293b;
+  --soft: #475569;
+  --mute: #94a3b8;
+  --border: #e2e8f0;
+  --input-bg: #f8fafc;
+  --shadow: 0 10px 40px rgba(0,0,0,.08);
+  --shadow-sm: 0 4px 15px rgba(0,0,0,.06);
+}
+[data-theme="dark"] {
+  --card: #1e293b;
+  --bg: #0f172a;
+  --text: #f1f5f9;
+  --soft: #cbd5e1;
+  --mute: #64748b;
+  --border: #334155;
+  --input-bg: #0b1220;
+  --shadow: 0 10px 40px rgba(0,0,0,.45);
+  --shadow-sm: 0 4px 15px rgba(0,0,0,.3);
+}
+
+body {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  padding: 16px;
+  direction: rtl;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  transition: background .5s;
+}
+body[data-theme="dark"] {
+  background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+}
+body.s-under  { background: linear-gradient(135deg, #0ea5e9 0%, #38bdf8 100%); }
+body.s-normal { background: linear-gradient(135deg, #059669 0%, #10b981 100%); }
+body.s-over   { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); }
+body.s-obese  { background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%); }
+
+.app {
+  width: 100%;
+  max-width: 500px;
+  animation: fadeIn .5s ease;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ==================== باش ==================== */
+.header {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: var(--shadow);
+  margin-bottom: 12px;
+  transition: background .3s;
+}
+.header-left { display: flex; align-items: center; gap: 12px; flex: 1; }
+.header-icon {
+  width: 46px; height: 46px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+  box-shadow: 0 6px 16px rgba(102,126,234,.4);
+  flex-shrink: 0;
+}
+.header-title { font-size: 15px; font-weight: 800; color: var(--text); line-height: 1.2; }
+.header-sub { font-size: 11px; color: var(--mute); margin-top: 3px; }
+.header-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.theme-btn {
+  width: 38px; height: 38px;
+  background: var(--input-bg);
+  border: 2px solid var(--border);
+  border-radius: 11px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: .25s;
+}
+.theme-btn:hover { transform: scale(1.08); background: var(--border); }
+
+/* ==================== كارتا ==================== */
+.card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+  transition: background .3s;
+}
+.card-title {
+  font-size: 11.5px;
+  font-weight: 800;
+  color: var(--mute);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+/* ==================== تاللاش ==================== */
+.seg {
+  display: flex;
+  gap: 4px;
+  background: var(--input-bg);
+  border-radius: 12px;
+  padding: 4px;
+  border: 1.5px solid var(--border);
+}
+.seg button {
+  flex: 1;
+  padding: 9px 4px;
+  border: none;
+  background: transparent;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--soft);
+  cursor: pointer;
+  transition: .2s;
+  font-family: inherit;
+}
+.seg button.active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(102,126,234,.35);
+}
+
+/* ==================== جىنس ==================== */
+.gender {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.gender button {
+  padding: 15px 8px;
+  background: var(--input-bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--soft);
+  cursor: pointer;
+  transition: .25s;
+  font-family: inherit;
+}
+.gender button.active {
+  color: #fff;
+  border-color: transparent;
+  transform: translateY(-2px);
+}
+.gender button[data-g="male"].active {
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  box-shadow: 0 6px 18px rgba(59,130,246,.4);
+}
+.gender button[data-g="female"].active {
+  background: linear-gradient(135deg, #ec4899, #f472b6);
+  box-shadow: 0 6px 18px rgba(236,72,153,.4);
+}
+
+/* ==================== فورم ==================== */
+.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.field { margin-bottom: 12px; }
+.field label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--soft);
+  margin-bottom: 6px;
+}
+.field input {
+  width: 100%;
+  padding: 13px 14px;
+  background: var(--input-bg);
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  transition: .2s;
+  font-family: inherit;
+}
+.field input:focus {
+  border-color: var(--primary);
+  background: var(--card);
+  box-shadow: 0 0 0 4px rgba(102,126,234,.15);
+}
+.field input::placeholder { color: var(--mute); font-weight: 500; }
+
+/* ==================== كۇنۇپكا ==================== */
+.btn {
+  width: 100%;
+  padding: 15px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-2));
+  color: #fff;
+  border: none;
+  border-radius: 13px;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: .25s;
+  box-shadow: 0 8px 22px rgba(102,126,234,.4);
+  font-family: inherit;
+}
+.btn:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(102,126,234,.5); }
+.btn:active { transform: translateY(0); }
+
+/* ==================== نەتىجە ==================== */
+.result {
+  padding: 22px 18px;
+  border-radius: 18px;
+  margin-bottom: 12px;
+  border: 2.5px solid transparent;
+  display: none;
+  animation: pop .45s cubic-bezier(.34, 1.56, .64, 1);
+  box-shadow: var(--shadow);
+}
+.result.show { display: block; }
+@keyframes pop {
+  from { opacity: 0; transform: scale(.92); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.res-icon { font-size: 54px; text-align: center; margin-bottom: 8px; }
+
+.bmi-circle {
+  width: 170px;
+  height: 170px;
+  border-radius: 50%;
+  margin: 0 auto 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: .8s cubic-bezier(.34, 1.56, .64, 1);
+  box-shadow: 0 10px 30px rgba(0,0,0,.15);
+}
+.bmi-circle::before {
+  content: '';
+  position: absolute;
+  inset: 11px;
+  background: var(--card);
+  border-radius: 50%;
+}
+.bmi-num {
+  font-size: 54px;
+  font-weight: 900;
+  line-height: 1;
+  position: relative;
+  z-index: 2;
+}
+.bmi-label {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--mute);
+  letter-spacing: 2.5px;
+  margin-top: 6px;
+  position: relative;
+  z-index: 2;
+}
+
+.res-status {
+  text-align: center;
+  font-size: 20px;
+  font-weight: 900;
+  margin-bottom: 6px;
+}
+.res-desc {
+  text-align: center;
+  font-size: 12.5px;
+  line-height: 1.6;
+  margin-bottom: 16px;
+  opacity: .85;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.info-card {
+  background: rgba(255,255,255,.6);
+  border-radius: 12px;
+  padding: 12px 8px;
+  text-align: center;
+  transition: transform .2s;
+}
+.info-card:hover { transform: translateY(-2px); }
+[data-theme="dark"] .info-card { background: rgba(0,0,0,.3); }
+.info-lbl {
+  font-size: 10px;
+  font-weight: 800;
+  opacity: .75;
+  margin-bottom: 5px;
+  letter-spacing: .3px;
+}
+.info-val { font-size: 16px; font-weight: 900; }
+
+/* رەڭلەر */
+.res-under { background: #e0f2fe; border-color: #0ea5e9; color: #075985; }
+.res-under .bmi-num { color: #0ea5e9; }
+.res-normal { background: #d1fae5; border-color: #10b981; color: #065f46; }
+.res-normal .bmi-num { color: #10b981; }
+.res-over { background: #fef3c7; border-color: #f59e0b; color: #92400e; }
+.res-over .bmi-num { color: #f59e0b; }
+.res-obese { background: #fee2e2; border-color: #ef4444; color: #991b1b; }
+.res-obese .bmi-num { color: #ef4444; }
+
+[data-theme="dark"] .res-under { background: #082f49; color: #7dd3fc; }
+[data-theme="dark"] .res-normal { background: #064e3b; color: #6ee7b7; }
+[data-theme="dark"] .res-over { background: #78350f; color: #fcd34d; }
+[data-theme="dark"] .res-obese { background: #7f1d1d; color: #fca5a5; }
+
+/* ==================== تەۋسىيە ==================== */
+.tips {
+  margin-top: 14px;
+  padding: 13px;
+  background: rgba(255,255,255,.55);
+  border-radius: 12px;
+  border: 2px dashed rgba(0,0,0,.08);
+}
+[data-theme="dark"] .tips { background: rgba(0,0,0,.25); border-color: rgba(255,255,255,.1); }
+.tips-title {
+  font-size: 12px;
+  font-weight: 900;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.tip {
+  font-size: 12px;
+  line-height: 1.6;
+  padding: 4px 22px 4px 0;
+  position: relative;
+}
+.tip::before { content: '💡'; position: absolute; right: 0; top: 4px; }
+
+/* ==================== ھەرىكەت ==================== */
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 14px;
+}
+.action-btn {
+  padding: 12px;
+  background: rgba(255,255,255,.7);
+  border: 2px solid rgba(255,255,255,.9);
+  border-radius: 11px;
+  color: var(--soft);
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: .2s;
+  font-family: inherit;
+}
+[data-theme="dark"] .action-btn { background: rgba(0,0,0,.3); border-color: rgba(255,255,255,.15); color: var(--text); }
+.action-btn:hover { transform: translateY(-2px); }
+
+/* ==================== تارىخ ==================== */
+.hist-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.hist-clear {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--soft);
+  font-size: 11px;
+  font-weight: 800;
+  padding: 5px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: .2s;
+  font-family: inherit;
+}
+.hist-clear:hover { background: var(--input-bg); color: var(--text); }
+
+.hist-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 11px 12px;
+  background: var(--input-bg);
+  border-radius: 11px;
+  margin-bottom: 6px;
+  transition: .2s;
+  animation: slideIn .3s ease backwards;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(15px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+.hist-item:hover { transform: translateX(-3px); }
+.hist-left { display: flex; align-items: center; gap: 11px; }
+.hist-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.hist-bmi { font-size: 15px; font-weight: 900; color: var(--text); }
+.hist-date { font-size: 10.5px; color: var(--mute); margin-top: 2px; }
+.hist-badge {
+  font-size: 10.5px;
+  font-weight: 800;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--soft);
+}
+.empty {
+  text-align: center;
+  padding: 24px;
+  color: var(--mute);
+  font-size: 12.5px;
+}
+
+/* ==================== Toast ==================== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(150px);
+  background: #0f172a;
+  color: #fff;
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 13px;
+  font-weight: 800;
+  z-index: 999;
+  transition: transform .35s cubic-bezier(.34, 1.56, .64, 1);
+  box-shadow: 0 15px 40px rgba(0,0,0,.4);
+  max-width: 90vw;
+  text-align: center;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* ==================== Responsive ==================== */
+@media (max-width: 400px) {
+  .bmi-circle { width: 145px; height: 145px; }
+  .bmi-num { font-size: 44px; }
+  .info-val { font-size: 14px; }
+  .header-title { font-size: 13.5px; }
+  .header-sub { font-size: 10.5px; }
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ========== باش ========== -->
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">⚖️</div>
+      <div>
+        <div class="header-title" id="txtTitle">ئادەمنىڭ ئېغىرلىقىنى ھېسابلىغۇچ</div>
+        <div class="header-sub" id="txtSub">بەدەن ئېغىرلىق كۆرسەتكۈچى</div>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="theme-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+    </div>
+  </div>
+
+  <!-- ========== تىل ========== -->
+  <div class="card">
+    <div class="card-title" id="lblLang">تىل</div>
+    <div class="seg" id="langSeg">
+      <button data-lang="ug" class="active" onclick="setLang('ug')">ئۇيغۇر</button>
+      <button data-lang="ar" onclick="setLang('ar')">عربي</button>
+      <button data-lang="en" onclick="setLang('en')">EN</button>
+      <button data-lang="tr" onclick="setLang('tr')">TR</button>
+    </div>
+  </div>
+
+  <!-- ========== جىنس ========== -->
+  <div class="card">
+    <div class="card-title" id="lblGender">جىنسىيىتى</div>
+    <div class="gender">
+      <button data-g="male" class="active" onclick="setGender('male')" id="btnMale">👨 ئەر</button>
+      <button data-g="female" onclick="setGender('female')" id="btnFemale">👩 ئايال</button>
+    </div>
+  </div>
+
+  <!-- ========== كىرگۈزۈش ========== -->
+  <div class="card">
+    <div class="card-title" id="lblInput">مەلۇمات</div>
+
+    <div class="row">
+      <div class="field">
+        <label id="lblW">ئېغىرلىق (kg)</label>
+        <input type="number" id="weight" placeholder="70" step="0.1" min="1" inputmode="decimal">
+      </div>
+      <div class="field">
+        <label id="lblH">بوي ئېگىزلىكى (cm)</label>
+        <input type="number" id="height" placeholder="175" step="0.1" min="1" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="field">
+      <label id="lblA">يېشى</label>
+      <input type="number" id="age" placeholder="25" step="1" min="2" max="120" inputmode="numeric">
+    </div>
+
+    <button class="btn" onclick="calculate()" id="btnCalc">📊 ھېسابلاش</button>
+  </div>
+
+  <!-- ========== نەتىجە ========== -->
+  <div class="result" id="result">
+    <div class="res-icon" id="resIcon">🙂</div>
+
+    <div class="bmi-circle" id="bmiCircle">
+      <div class="bmi-num" id="bmiNum">0</div>
+      <div class="bmi-label">BMI</div>
+    </div>
+
+    <div class="res-status" id="resStatus">—</div>
+    <div class="res-desc" id="resDesc">—</div>
+
+    <div class="info-grid">
+      <div class="info-card">
+        <div class="info-lbl" id="lblIdeal">ئىدېئال ئېغىرلىق</div>
+        <div class="info-val" id="idealVal">—</div>
+      </div>
+      <div class="info-card">
+        <div class="info-lbl" id="lblBmr">BMR</div>
+        <div class="info-val" id="bmrVal">—</div>
+      </div>
+      <div class="info-card">
+        <div class="info-lbl" id="lblFat">بەدەن ياغ %</div>
+        <div class="info-val" id="fatVal">—</div>
+      </div>
+      <div class="info-card">
+        <div class="info-lbl" id="lblTdee">كۈنلۈك كالورىيە</div>
+        <div class="info-val" id="tdeeVal">—</div>
+      </div>
+    </div>
+
+    <div class="tips">
+      <div class="tips-title" id="lblTipsTitle">📌 تەۋسىيىلەر</div>
+      <div id="tipsList"></div>
+    </div>
+
+    <div class="actions">
+      <button class="action-btn" onclick="saveResult()" id="btnSave">💾 ساقلاش</button>
+      <button class="action-btn" onclick="shareResult()" id="btnShare">📤 ھەمبەھىرلەش</button>
+    </div>
+  </div>
+
+  <!-- ========== تارىخ ========== -->
+  <div class="card">
+    <div class="hist-head">
+      <div class="card-title" style="margin:0" id="lblHistory">📈 تارىخ</div>
+      <button class="hist-clear" onclick="clearHistory()" id="lblClear">تازىلاش</button>
+    </div>
+    <div id="historyList"></div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ==================================================
+   1. تەرجىمىلەر
+   ================================================== */
+var T = {
+  ug: {
+    title: 'ئادەمنىڭ ئېغىرلىقىنى ھېسابلىغۇچ',
+    sub: 'بەدەن ئېغىرلىق كۆرسەتكۈچى',
+    lang: 'تىل',
+    gender: 'جىنسىيىتى',
+    male: '👨 ئەر',
+    female: '👩 ئايال',
+    input: 'مەلۇمات',
+    w: 'ئېغىرلىق (kg)',
+    h: 'بوي ئېگىزلىكى (cm)',
+    a: 'يېشى',
+    calc: '📊 ھېسابلاش',
+    ideal: 'ئىدېئال ئېغىرلىق',
+    bmr: 'BMR',
+    fat: 'بەدەن ياغ %',
+    tdee: 'كۈنلۈك كالورىيە',
+    tipsTitle: '📌 تەۋسىيىلەر',
+    save: '💾 ساقلاش',
+    share: '📤 ھەمبەھىرلەش',
+    history: '📈 تارىخ',
+    clear: 'تازىلاش',
+    empty: 'ھازىرچە تارىخ يوق',
+    under: 'ئورۇق',
+    normal: 'نورمال',
+    over: 'ئارتۇقچە ئېغىر',
+    obese: 'سىمىز',
+    under_desc: 'ئېغىرلىقىڭىز نورمالدىن ئاز',
+    normal_desc: 'ئېسىل! ئېغىرلىقىڭىز نورمال',
+    over_desc: 'ئېغىرلىقىڭىز نورمالدىن ئارتۇق',
+    obese_desc: 'ئېغىرلىقىڭىز سىمىز دەرىجىسىدە',
+    alert: '⚠️ بارلىق مەيدانلارنى تولدۇرۇڭ!',
+    saved: '✅ ساقلاندى!',
+    copied: '📋 كۆچۈرۈلدى!',
+    cleared: '🗑️ تازىلاندى',
+    confirmClear: 'تارىخنى تازىلامسىز؟',
+    tipUnder: ['🥗 ئوزۇقلۇق قىممىتى يۇقىرى يېمەكلىكلەرنى كۆپەيتىڭ', '💪 كۈچ مەشىقى قىلىڭ', '🥜 يېڭىقاق ۋە پىستە ئىستېمال قىلىڭ', '👨‍⚕️ ئوزۇقلۇق مۇتەخەسسىسىگە مۇراجىئەت قىلىڭ'],
+    tipNormal: ['🏃 ھەپتىدە 150 مىنۇت ھەرىكەت قىلىڭ', '🥗 تەڭپۇڭلاشقان يېمەكلىك ئىستېمال قىلىڭ', '💧 كۈنىگە 2 لىتىر سۇ ئىچىڭ', '😴 7-9 سائەت ئۇخلاڭ'],
+    tipOver: ['🚶 كۈنلۈك 8000 قەدەم مېڭىڭ', '🍽️ پورسىيەنى كىچىكلىتىڭ', '🚫 شېكەرلىك ئىچىملىكتىن ساقلىنىڭ', '🏊 سۇ ئىچىدە مەشىق قىلىڭ'],
+    tipObese: ['👨‍⚕️ دوختۇر بىلەن مەسلىھەتلىشىڭ', '🥗 كالورىيە تۆۋەن يېمەكلىكلەر', '🏃 ھەرىكەتنى تەدرىجىي كۆپەيتىڭ', '📊 ئېغىرلىقنى كۈنلۈك كۆزىتىڭ']
+  },
+  ar: {
+    title: 'حاسبة وزن الشخص',
+    sub: 'مؤشر كتلة الجسم',
+    lang: 'اللغة',
+    gender: 'الجنس',
+    male: '👨 ذكر',
+    female: '👩 أنثى',
+    input: 'البيانات',
+    w: 'الوزن (كجم)',
+    h: 'الطول (سم)',
+    a: 'العمر',
+    calc: '📊 احسب',
+    ideal: 'الوزن المثالي',
+    bmr: 'BMR',
+    fat: 'نسبة الدهون %',
+    tdee: 'السعرات اليومية',
+    tipsTitle: '📌 النصائح',
+    save: '💾 حفظ',
+    share: '📤 مشاركة',
+    history: '📈 السجل',
+    clear: 'مسح',
+    empty: 'لا يوجد سجل بعد',
+    under: 'نقص الوزن',
+    normal: 'طبيعي',
+    over: 'زيادة الوزن',
+    obese: 'سمنة',
+    under_desc: 'وزنك أقل من الطبيعي',
+    normal_desc: 'ممتاز! وزنك طبيعي',
+    over_desc: 'وزنك أكثر من الطبيعي',
+    obese_desc: 'وزنك في مرحلة السمنة',
+    alert: '⚠️ املأ جميع الحقول!',
+    saved: '✅ تم الحفظ!',
+    copied: '📋 تم النسخ!',
+    cleared: '🗑️ تم المسح',
+    confirmClear: 'مسح السجل؟',
+    tipUnder: ['🥗 زد الأطعمة المغذية', '💪 قم بتمارين القوة', '🥜 تناول المكسرات', '👨‍⚕️ استشر أخصائي تغذية'],
+    tipNormal: ['🏃 150 دقيقة نشاط أسبوعيًا', '🥗 نظام غذائي متوازن', '💧 اشرب 2 لتر ماء', '😴 نم 7-9 ساعات'],
+    tipOver: ['🚶 امشِ 8000 خطوة يوميًا', '🍽️ صغّر الحصص', '🚫 تجنب السكريات', '🏊 اسبح بانتظام'],
+    tipObese: ['👨‍⚕️ استشر الطبيب', '🥗 أطعمة قليلة السعرات', '🏃 زد النشاط تدريجيًا', '📊 راقب وزنك']
+  },
+  en: {
+    title: 'Person Weight Calculator',
+    sub: 'Body Mass Index Calculator',
+    lang: 'Language',
+    gender: 'Gender',
+    male: '👨 Male',
+    female: '👩 Female',
+    input: 'Input',
+    w: 'Weight (kg)',
+    h: 'Height (cm)',
+    a: 'Age',
+    calc: '📊 Calculate',
+    ideal: 'Ideal Weight',
+    bmr: 'BMR',
+    fat: 'Body Fat %',
+    tdee: 'Daily Calories',
+    tipsTitle: '📌 Tips',
+    save: '💾 Save',
+    share: '📤 Share',
+    history: '📈 History',
+    clear: 'Clear',
+    empty: 'No history yet',
+    under: 'Underweight',
+    normal: 'Normal',
+    over: 'Overweight',
+    obese: 'Obese',
+    under_desc: 'Your weight is below normal',
+    normal_desc: 'Excellent! Your weight is normal',
+    over_desc: 'Your weight is above normal',
+    obese_desc: 'Your weight is in the obese range',
+    alert: '⚠️ Please fill all fields!',
+    saved: '✅ Saved!',
+    copied: '📋 Copied!',
+    cleared: '🗑️ Cleared',
+    confirmClear: 'Clear history?',
+    tipUnder: ['🥗 Eat nutrient-dense foods', '💪 Do strength training', '🥜 Consume nuts & seeds', '👨‍⚕️ See a nutritionist'],
+    tipNormal: ['🏃 150 min activity/week', '🥗 Balanced diet', '💧 Drink 2L water daily', '😴 Sleep 7-9 hours'],
+    tipOver: ['🚶 Walk 8000 steps daily', '🍽️ Reduce portions', '🚫 Avoid sugary drinks', '🏊 Swim regularly'],
+    tipObese: ['👨‍⚕️ Consult a doctor', '🥗 Low-calorie foods', '🏃 Increase activity', '📊 Track weight daily']
+  },
+  tr: {
+    title: 'Kişi Kilo Hesaplayıcı',
+    sub: 'Vücut Kitle İndeksi Hesaplayıcı',
+    lang: 'Dil',
+    gender: 'Cinsiyet',
+    male: '👨 Erkek',
+    female: '👩 Kadın',
+    input: 'Veri',
+    w: 'Kilo (kg)',
+    h: 'Boy (cm)',
+    a: 'Yaş',
+    calc: '📊 Hesapla',
+    ideal: 'İdeal Kilo',
+    bmr: 'BMR',
+    fat: 'Vücut Yağ %',
+    tdee: 'Günlük Kalori',
+    tipsTitle: '📌 Öneriler',
+    save: '💾 Kaydet',
+    share: '📤 Paylaş',
+    history: '📈 Geçmiş',
+    clear: 'Temizle',
+    empty: 'Henüz geçmiş yok',
+    under: 'Zayıf',
+    normal: 'Normal',
+    over: 'Fazla Kilolu',
+    obese: 'Obez',
+    under_desc: 'Kilonuz normalin altında',
+    normal_desc: 'Mükemmel! Kilonuz normal',
+    over_desc: 'Kilonuz normalin üzerinde',
+    obese_desc: 'Kilonuz obez aralığında',
+    alert: '⚠️ Lütfen tüm alanları doldurun!',
+    saved: '✅ Kaydedildi!',
+    copied: '📋 Kopyalandı!',
+    cleared: '🗑️ Temizlendi',
+    confirmClear: 'Geçmiş temizlensin mi?',
+    tipUnder: ['🥗 Besleyici gıdalar tüketin', '💪 Güç antrenmanı yapın', '🥜 Kuruyemiş tüketin', '👨‍⚕️ Diyetisyene başvurun'],
+    tipNormal: ['🏃 Haftada 150 dk aktivite', '🥗 Dengeli beslenme', '💧 Günde 2L su', '😴 7-9 saat uyku'],
+    tipOver: ['🚶 Günde 8000 adım', '🍽️ Porsiyonları küçültün', '🚫 Şekerli içeceklerden kaçının', '🏊 Yüzme yapın'],
+    tipObese: ['👨‍⚕️ Doktora başvurun', '🥗 Düşük kalorili gıdalar', '🏃 Aktiviteyi artırın', '📊 Kilonuzu takip edin']
+  }
+};
+
+/* ==================================================
+   2. ھالەت
+   ================================================== */
+var state = {
+  lang: 'ug',
+  gender: 'male',
+  theme: 'light'
+};
+
+var HISTORY_KEY = 'adam_weight_history_v2';
+
+/* ==================================================
+   3. تىل ئالماشتۇرۇش
+   ================================================== */
+function setLang(l) {
+  state.lang = l;
+  var t = T[l];
+
+  document.documentElement.lang = l;
+  document.documentElement.dir = (l === 'ar' || l === 'ug') ? 'rtl' : 'ltr';
+
+  var langBtns = document.querySelectorAll('#langSeg button');
+  for (var i = 0; i < langBtns.length; i++) {
+    langBtns[i].classList.toggle('active', langBtns[i].dataset.lang === l);
+  }
+
+  function set(id, val) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = val;
+  }
+
+  set('txtTitle', t.title);
+  set('txtSub', t.sub);
+  set('lblLang', t.lang);
+  set('lblGender', t.gender);
+  set('btnMale', t.male);
+  set('btnFemale', t.female);
+  set('lblInput', t.input);
+  set('lblW', t.w);
+  set('lblH', t.h);
+  set('lblA', t.a);
+  set('btnCalc', t.calc);
+  set('lblIdeal', t.ideal);
+  set('lblBmr', t.bmr);
+  set('lblFat', t.fat);
+  set('lblTdee', t.tdee);
+  set('lblTipsTitle', t.tipsTitle);
+  set('btnSave', t.save);
+  set('btnShare', t.share);
+  set('lblHistory', t.history);
+  set('lblClear', t.clear);
+
+  var resultBox = document.getElementById('result');
+  if (resultBox && resultBox.classList.contains('show')) {
+    calculate();
+  }
+  renderHistory();
+}
+
+/* ==================================================
+   4. جىنس ئالماشتۇرۇش
+   ================================================== */
+function setGender(g) {
+  state.gender = g;
+  var btns = document.querySelectorAll('.gender button');
+  for (var i = 0; i < btns.length; i++) {
+    btns[i].classList.toggle('active', btns[i].dataset.g === g);
+  }
+  var resultBox = document.getElementById('result');
+  if (resultBox && resultBox.classList.contains('show')) calculate();
+}
+
+/* ==================================================
+   5. تېما ئالماشتۇرۇش
+   ================================================== */
+function toggleTheme() {
+  state.theme = (state.theme === 'light') ? 'dark' : 'light';
+  document.body.setAttribute('data-theme', state.theme);
+  document.getElementById('themeBtn').textContent = (state.theme === 'dark') ? '☀️' : '🌙';
+}
+
+/* ==================================================
+   6. ھالەت ئېنىقلاش
+   ================================================== */
+function getCategory(bmi) {
+  if (bmi < 18.5) return 'under';
+  if (bmi < 25) return 'normal';
+  if (bmi < 30) return 'over';
+  return 'obese';
+}
+
+function getIcon(cat) {
+  var icons = { under: '🥶', normal: '😊', over: '😐', obese: '😰' };
+  return icons[cat] || '🙂';
+}
+
+function getColor(bmi) {
+  if (bmi < 18.5) return '#0ea5e9';
+  if (bmi < 25) return '#10b981';
+  if (bmi < 30) return '#f59e0b';
+  return '#ef4444';
+}
+
+/* ==================================================
+   7. ھېسابلاش
+   ================================================== */
+function calculate() {
+  var t = T[state.lang];
+
+  var weight = parseFloat(document.getElementById('weight').value);
+  var height = parseFloat(document.getElementById('height').value);
+  var age = parseFloat(document.getElementById('age').value);
+
+  if (!weight || !height || !age || weight <= 0 || height <= 0 || age <= 0) {
+    showToast(t.alert);
+    return;
+  }
+
+  var hM = height / 100;
+  var bmi = weight / (hM * hM);
+  var bmiStr = bmi.toFixed(1);
+  var category = getCategory(bmi);
+  var color = getColor(bmi);
+
+  // ==== BMI چەمبىرى ====
+  var pct = Math.min(bmi / 40 * 100, 100);
+  var circle = document.getElementById('bmiCircle');
+  circle.style.background = 'conic-gradient(' + color + ' 0% ' + pct + '%, rgba(150,150,150,.25) ' + pct + '% 100%)';
+  document.getElementById('bmiNum').textContent = bmiStr;
+
+  // ==== نەتىجە كارتا ====
+  var resultBox = document.getElementById('result');
+  resultBox.className = 'result show res-' + category;
+  document.body.className = 's-' + category;
+  if (state.theme === 'dark') document.body.setAttribute('data-theme', 'dark');
+
+  document.getElementById('resIcon').textContent = getIcon(category);
+  document.getElementById('resStatus').textContent = t[category];
+  document.getElementById('resDesc').textContent = t[category + '_desc'];
+
+  // ==== ئىدېئال ئېغىرلىق (Devine) ====
+  var hInch = height / 2.54;
+  var over60 = Math.max(0, hInch - 60);
+  var ideal = (state.gender === 'male')
+    ? 50 + 2.3 * over60
+    : 45.5 + 2.3 * over60;
+  document.getElementById('idealVal').textContent = ideal.toFixed(1) + ' kg';
+
+  // ==== BMR (Mifflin-St Jeor) ====
+  var bmr = (state.gender === 'male')
+    ? 10 * weight + 6.25 * height - 5 * age + 5
+    : 10 * weight + 6.25 * height - 5 * age - 161;
+  document.getElementById('bmrVal').textContent = Math.round(bmr) + ' kcal';
+
+  // ==== بەدەن ياغ % (Deurenberg) ====
+  var fat = (state.gender === 'male')
+    ? 1.20 * bmi + 0.23 * age - 16.2
+    : 1.20 * bmi + 0.23 * age - 5.4;
+  fat = Math.max(2, Math.min(70, fat));
+  document.getElementById('fatVal').textContent = fat.toFixed(1) + '%';
+
+  // ==== TDEE ====
+  var tdee = Math.round(bmr * 1.55);
+  document.getElementById('tdeeVal').textContent = tdee + ' kcal';
+
+  // ==== تەۋسىيىلەر ====
+  var tipsKey = 'tip' + category.charAt(0).toUpperCase() + category.slice(1);
+  var tips = t[tipsKey] || [];
+  var tipsHTML = '';
+  for (var i = 0; i < tips.length; i++) {
+    tipsHTML += '<div class="tip">' + tips[i] + '</div>';
+  }
+  document.getElementById('tipsList').innerHTML = tipsHTML;
+
+  // ==== ساقلاش ====
+  window._lastResult = {
+    bmi: parseFloat(bmiStr),
+    category: category,
+    status: t[category],
+    ts: Date.now()
+  };
+
+  // تور بەت ئارقا كۆرۈنۈشىنى ئەسلىگە قايتۇرۇش
+  setTimeout(function() {
+    var el = document.getElementById('result');
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+}
+
+/* ==================================================
+   8. تارىخ باشقۇرۇش
+   ================================================== */
+function loadHistory() {
+  try {
+    var data = localStorage.getItem(HISTORY_KEY);
+    return data ? JSON.parse(data) : [];
+  } catch (e) {
+    return [];
+  }
+}
+
+function saveHistory(arr) {
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(arr.slice(-30)));
+  } catch (e) {}
+}
+
+function saveResult() {
+  var t = T[state.lang];
+  if (!window._lastResult) {
+    showToast(t.alert);
+    return;
+  }
+  var arr = loadHistory();
+  arr.push(window._lastResult);
+  saveHistory(arr);
+  renderHistory();
+  showToast(t.saved);
+}
+
+function clearHistory() {
+  var t = T[state.lang];
+  if (!confirm(t.confirmClear)) return;
+  localStorage.removeItem(HISTORY_KEY);
+  renderHistory();
+  showToast(t.cleared);
+}
+
+function renderHistory() {
+  var t = T[state.lang];
+  var arr = loadHistory().slice().reverse();
+  var box = document.getElementById('historyList');
+  if (!box) return;
+
+  if (arr.length === 0) {
+    box.innerHTML = '<div class="empty">' + t.empty + '</div>';
+    return;
+  }
+
+  var html = '';
+  var show = arr.slice(0, 10);
+  for (var i = 0; i < show.length; i++) {
+    var r = show[i];
+    var d = new Date(r.ts);
+    var dateStr = d.toLocaleDateString();
+    var timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    var color = getColor(r.bmi);
+
+    html += '<div class="hist-item" style="animation-delay:' + (i * 0.05) + 's">' +
+      '<div class="hist-left">' +
+        '<span class="hist-dot" style="background:' + color + '"></span>' +
+        '<div>' +
+          '<div class="hist-bmi">BMI ' + r.bmi + '</div>' +
+          '<div class="hist-date">' + dateStr + ' • ' + timeStr + '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="hist-badge">' + r.status + '</div>' +
+    '</div>';
+  }
+  box.innerHTML = html;
+}
+
+/* ==================================================
+   9. ھەمبەھىرلەش
+   ================================================== */
+function shareResult() {
+  var t = T[state.lang];
+  if (!window._lastResult) {
+    showToast(t.alert);
+    return;
+  }
+
+  var txt = '📊 BMI: ' + window._lastResult.bmi + '\n📋 ' + window._lastResult.status;
+
+  if (navigator.share) {
+    navigator.share({ title: t.title, text: txt }).catch(function() {});
+  } else if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(txt).then(function() {
+      showToast(t.copied);
+    }).catch(function() {
+      showToast(t.copied);
+    });
+  } else {
+    showToast(t.copied);
+  }
+}
+
+/* ==================================================
+   10. Toast
+   ================================================== */
+var toastTimer;
+function showToast(msg) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function() {
+    el.classList.remove('show');
+  }, 2200);
+}
+
+/* ==================================================
+   11. Enter بىلەن ھېسابلاش
+   ================================================== */
+var inputs = document.querySelectorAll('input');
+for (var i = 0; i < inputs.length; i++) {
+  inputs[i].addEventListener('keypress', function(e) {
+    if (e.key === 'Enter' || e.keyCode === 13) {
+      calculate();
+    }
+  });
+}
+
+/* ==================================================
+   12. باشلاش
+   ================================================== */
+setLang('ug');
+renderHistory();
+</script>
+
+</body>
+</html>
